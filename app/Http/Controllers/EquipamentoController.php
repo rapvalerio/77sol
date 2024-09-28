@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use App\Models\Equipamentos;
+use App\Models\Equipamento;
 
-class EquipamentosController extends Controller
+class EquipamentoController extends Controller
 {
     /**
      * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        $clientes = Equipamentos::all();
+        $clientes = Equipamento::all();
         return response()->json($clientes);
     }
 
@@ -22,8 +23,12 @@ class EquipamentosController extends Controller
      */
     public function store(Request $request)
     {
+        $validatedData = $request->validate([
+            'descricao' => 'required|string|max:100',
+        ]);
+
         try{
-            $equipamento = Equipamentos::create($request->all());
+            $equipamento = Equipamento::create($validatedData);
             return response()->json($equipamento, 201);
         } catch(\Exception $e) {
             return response()->json(['error' => $e->getMessage()], status:500);
@@ -37,7 +42,7 @@ class EquipamentosController extends Controller
     public function show(string $id)
     {
         try {
-            $clientes = Equipamentos::findOrFail($id);
+            $clientes = Equipamento::findOrFail($id);
             return response()->json($clientes);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 404);
@@ -51,13 +56,19 @@ class EquipamentosController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $cliente = Equipamentos::find($id);
+        try{
+            $cliente = Equipamento::findOrFail($id);
 
-        if ($cliente) {
-            $cliente->update($request->all());
-            return response()->json($cliente);
-        } else {
-            return response()->json(['message' => 'Equipamento não encontrado'], 404);
+            $validatedData = $request->validate([
+                'descricao' => 'required|string|max:100',
+            ]);
+
+            $cliente->update($validatedData);
+            return response()->json($cliente, 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'equipamento not found'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'erro ao atualizar o equipamento: ' . $e->getMessage()], 500);
         }
     }
 
@@ -67,13 +78,14 @@ class EquipamentosController extends Controller
      */
     public function destroy(string $id)
     {
-        $cliente = Equipamentos::find($id);
-
-        if ($cliente) {
+        try{
+            $cliente = Equipamento::findOrFail($id);
             $cliente->delete();
             return response()->json(['Equipamento deletado com sucesso'],200);
-        } else {
+        } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'equipamento not found'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'erro ao deletetar equipamento: ' . $e->getMessage()], 500);
         }
     }
 }

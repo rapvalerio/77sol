@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Projetos;
+use App\Models\Projeto;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class ProjetoController extends Controller
@@ -12,7 +13,7 @@ class ProjetoController extends Controller
      */
     public function index()
     {
-        $clientes = Projetos::all();
+        $clientes = Projeto::all();
         return response()->json($clientes);
     }
 
@@ -22,8 +23,15 @@ class ProjetoController extends Controller
      */
     public function store(Request $request)
     {
+        $validatedData = $request->validate([
+            'nome' => 'required|string|max:100',
+            'cliente_id' => 'required|exists:clientes,id',
+            'endereco_id' => 'required|exists:enderecos,id',
+            'instalacao_id' => 'required|exists:instalacoes,id',
+        ]);
+
         try{
-            $endereco = Projetos::create($request->all());
+            $endereco = Projeto::create($validatedData);
             return response()->json($endereco, 201);
         } catch(\Exception $e) {
             return response()->json(['error' => $e->getMessage()], status:500);
@@ -37,7 +45,7 @@ class ProjetoController extends Controller
     public function show(string $id)
     {
         try {
-            $clientes = Projetos::findOrFail($id);
+            $clientes = Projeto::findOrFail($id);
             return response()->json($clientes);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 404);
@@ -51,13 +59,22 @@ class ProjetoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $cliente = Projetos::find($id);
+        try {
+            $cliente = Projeto::findOrFail($id);
 
-        if ($cliente) {
-            $cliente->update($request->all());
-            return response()->json($cliente);
-        } else {
+            $validatedData = $request->validate([
+                'nome' => 'sometimes|required|string|max:100',
+                'cliente_id' => 'sometimes|required|exists:clientes,id',
+                'endereco_id' => 'sometimes|required|exists:enderecos,id',
+                'instalacao_id' => 'sometimes|required|exists:instalacoes,id',
+            ]);
+
+            $cliente->update($validatedData);
+            return response()->json($cliente, 200);
+        } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Projetos não encontrado'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro ao atualizar o projeto: ' . $e->getMessage()], 500);
         }
     }
 
@@ -67,13 +84,14 @@ class ProjetoController extends Controller
      */
     public function destroy(string $id)
     {
-        $cliente = Projetos::find($id);
-
-        if ($cliente) {
+        try {
+            $cliente = Projeto::findOrFail($id);
             $cliente->delete();
             return response()->json(['Projetos deletado com sucesso'],200);
-        } else {
+        } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Projetos não encontrado'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro ao deletar o projeto: ' . $e->getMessage()], 500);
         }
     }
 }
