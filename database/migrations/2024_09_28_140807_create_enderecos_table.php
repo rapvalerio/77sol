@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('enderecos', function (Blueprint $table) {
             $table->id();
-            $table->char('uf', 2);
+            $table->char('uf', 2)->unique();
             $table->timestamps();
         });
     }
