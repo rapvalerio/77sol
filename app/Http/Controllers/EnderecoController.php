@@ -59,11 +59,11 @@ class EnderecoController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'uf' => 'required|string|size:2|in:SP,RJ,AM,BA,MG,ES,SC,RS,PR,PE,PB,AL,SE,DF,GO,MT,MS,TO,MA,PI,CE,RN,PA,AP,RR,RO,AC',
-        ]);
-
         try{
+            $validatedData = $request->validate([
+                'uf' => 'required|string|size:2|in:SP,RJ,AM,BA,MG,ES,SC,RS,PR,PE,PB,AL,SE,DF,GO,MT,MS,TO,MA,PI,CE,RN,PA,AP,RR,RO,AC',
+            ]);
+            
             $endereco = Endereco::create($validatedData);
             return response()->json($endereco, 201);
         } catch(\Exception $e) {

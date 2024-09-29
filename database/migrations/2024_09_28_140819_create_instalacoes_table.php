@@ -16,6 +16,15 @@ return new class extends Migration
             $table->string('descricao');
             $table->timestamps();
         });
+
+        DB::table('instalacoes')->insert([
+            ['descricao' => 'Fibrocimento (Madeira)', 'created_at' => now(), 'updated_at' => now()],
+            ['descricao' => 'Fibrocimento (Metálico)', 'created_at' => now(), 'updated_at' => now()],
+            ['descricao' => 'Cerâmico', 'created_at' => now(), 'updated_at' => now()],
+            ['descricao' => 'Metálico', 'created_at' => now(), 'updated_at' => now()],
+            ['descricao' => 'Laje', 'created_at' => now(), 'updated_at' => now()],
+            ['descricao' => 'Solo', 'created_at' => now(), 'updated_at' => now()],
+        ]);
     }
 
     /**

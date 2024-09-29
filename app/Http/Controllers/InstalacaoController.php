@@ -59,11 +59,11 @@ class InstalacaoController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'descricao' => 'required|string|max:100',
-        ]);
-
         try{
+            $validatedData = $request->validate([
+                'descricao' => 'required|string|max:100',
+            ]);
+            
             $endereco = Instalacao::create($validatedData);
             return response()->json($endereco, 201);
         } catch(\Exception $e) {

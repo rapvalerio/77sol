@@ -8,25 +8,12 @@ services:
     container_name: laravel_app
     restart: unless-stopped
     working_dir: /var/www
+    command: php artisan serve --host=0.0.0.0 --port=8000
     volumes:
       - .:/var/www
-      - ./docker/local.ini:/usr/local/etc/php/conf.d/local.ini
-    networks:
-      - laravel
-    depends_on:
-      - db
-
-  webserver:
-    image: nginx:alpine
-    container_name: laravel_webserver
-    restart: unless-stopped
     ports:
-      - "8000:80"
-    volumes:
-      - .:/var/www
-      - ./docker/default.conf:/etc/nginx/conf.d/default.conf
+      - "8000:8000"
     depends_on:
-      - app
       - db
     networks:
       - laravel

@@ -25,18 +25,55 @@ class ProjetoController extends Controller
     /**
      * @OA\Get(
      *     path="/api/projetos",
-     *     summary="Listar todos os projetos",
+     *     summary="Listar todos os projetos, com opção de filtragem por nome",
      *     tags={"Projetos"},
+     *     @OA\Parameter(
+     *         name="nome",
+     *         in="query",
+     *         required=false,
+     *         description="Filtrar projetos pelo nome. Utiliza busca parcial (like)",
+     *         @OA\Schema(
+     *             type="string",
+     *             example="Fazenda"
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Lista de projetos"
+     *         description="Lista de projetos filtrados",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="nome", type="string", example="Fazenda Solar"),
+     *                 @OA\Property(property="cliente_id", type="integer", example=1),
+     *                 @OA\Property(property="endereco_id", type="integer", example=1),
+     *                 @OA\Property(property="instalacao_id", type="integer", example=1),
+     *                 @OA\Property(property="equipamentos", type="array", @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="descricao", type="string", example="Módulo"),
+     *                     @OA\Property(property="quantidade", type="integer", example=5)
+     *                 )),
+     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2024-09-29T00:37:06.000000Z"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2024-09-29T00:37:06.000000Z")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Erro ao listar projetos"
      *     )
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
-        $clientes = Projeto::with('equipamentos')->get();
-        return response()->json($clientes);
+        $query = Projeto::query();
+
+        if($request->has("nome")){
+            $query->where("nome", 'like', '%'.$request->input('nome').'%');
+        }
+
+        $projetos = $query->with('equipamentos')->get();
+        return response()->json($projetos);
     }
     
     /**
@@ -69,27 +106,24 @@ class ProjetoController extends Controller
      */
     public function store(Request $request)
     {
-        // var_dump($request->equipamento);die;
-        $validatedData = $request->validate([
-            'nome' => 'required|string|max:100',
-            'cliente_id' => 'required|exists:clientes,id',
-            'endereco_id' => 'required|exists:enderecos,id',
-            'instalacao_id' => 'required|exists:instalacoes,id',
-            'equipamentos' => 'required|array',
-            'equipamentos.*.equipamento_id' => 'required|exists:equipamentos,id',
-            'equipamentos.*.quantidade' => 'required|integer|min:1',
-        ]);
-
         try{
+            $validatedData = $request->validate([
+                'nome' => 'required|string|max:100',
+                'cliente_id' => 'required|exists:clientes,id',
+                'endereco_id' => 'required|exists:enderecos,id',
+                'instalacao_id' => 'required|exists:instalacoes,id',
+                'equipamentos' => 'required|array',
+                'equipamentos.*.equipamento_id' => 'required|exists:equipamentos,id',
+                'equipamentos.*.quantidade' => 'required|integer|min:1',
+            ]);
+
             $projeto = Projeto::create($validatedData);
 
-            // Associar os equipamentos ao projeto na tabela intermediária
             $equipamentos = [];
             foreach ($request->equipamentos as $equipamento) {
                 $equipamentos[$equipamento['equipamento_id']] = ['quantidade' => $equipamento['quantidade']];
             }
     
-            // Usar sync() para associar equipamentos na tabela intermediária
             $projeto->equipamentos()->sync($equipamentos);
     
             return response()->json($projeto->load('equipamentos'), 201);

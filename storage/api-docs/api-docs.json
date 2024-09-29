@@ -1179,11 +1179,88 @@
                 "tags": [
                     "Projetos"
                 ],
-                "summary": "Listar todos os projetos",
+                "summary": "Listar todos os projetos, com opção de filtragem por nome",
                 "operationId": "e6d07ef7e5421002718e665b7a2e9fc1",
+                "parameters": [
+                    {
+                        "name": "nome",
+                        "in": "query",
+                        "description": "Filtrar projetos pelo nome. Utiliza busca parcial (like)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Fazenda"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Lista de projetos"
+                        "description": "Lista de projetos filtrados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "nome": {
+                                                "type": "string",
+                                                "example": "Fazenda Solar"
+                                            },
+                                            "cliente_id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "endereco_id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "instalacao_id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "equipamentos": {
+                                                "type": "array",
+                                                "items": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "descricao": {
+                                                            "type": "string",
+                                                            "example": "Módulo"
+                                                        },
+                                                        "quantidade": {
+                                                            "type": "integer",
+                                                            "example": 5
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2024-09-29T00:37:06.000000Z"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2024-09-29T00:37:06.000000Z"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro ao listar projetos"
                     }
                 }
             },

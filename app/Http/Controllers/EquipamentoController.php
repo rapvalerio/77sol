@@ -59,11 +59,11 @@ class EquipamentoController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'descricao' => 'required|string|max:100',
-        ]);
-
         try{
+            $validatedData = $request->validate([
+                'descricao' => 'required|string|max:100',
+            ]);
+            
             $equipamento = Equipamento::create($validatedData);
             return response()->json($equipamento, 201);
         } catch(\Exception $e) {

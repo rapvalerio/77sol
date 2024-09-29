@@ -100,14 +100,14 @@ class ClienteController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'nome' => 'required|string|max:100',
-            'email' => 'required|email|max:100',
-            'telefone' => 'required|string|max:20',
-            'documento' => ['required','string','max:20', new Documento],
-        ]);
-
         try{
+            $validatedData = $request->validate([
+                'nome' => 'required|string|max:100',
+                'email' => 'required|email|max:100',
+                'telefone' => 'required|string|max:20',
+                'documento' => ['required','string','max:20', new Documento],
+            ]);
+            
             $cliente = Cliente::create($validatedData);
             return response()->json($cliente, 201);
         } catch(\Exception $e){
