@@ -10,6 +10,7 @@ class Projeto extends Model
 {
     use HasFactory;
     protected $fillable = ['nome', 'cliente_id', 'endereco_id', 'instalacao_id'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     public function cliente()
     {
