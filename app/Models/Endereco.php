@@ -5,6 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @OA\Schema(
+ *     schema="Endereco",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="uf", type="string", example="SP"),
+ *     @OA\Property(property="created_at", type="string", format="date-time", example="2024-09-29T00:00:00Z"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time", example="2024-09-29T00:00:00Z")
+ * )
+ */
 class Endereco extends Model
 {
     use HasFactory;

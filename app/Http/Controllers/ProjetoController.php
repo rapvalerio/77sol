@@ -6,20 +6,66 @@ use App\Models\Projeto;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
+/**
+ * @OA\PathItem(
+ *     path="/api/projetos"
+ * )
+ */
+
+/**
+ * @OA\Info(
+ *      version="1.0.0",
+ *      title="Documentação da API de Gestão de Projetos",
+ *      description="Documentação da API para o sistema de gestão de projetos de energia solar",
+ * )
+ */
+
 class ProjetoController extends Controller
 {
     /**
-     * @return mixed|\Illuminate\Http\JsonResponse
+     * @OA\Get(
+     *     path="/api/projetos",
+     *     summary="Listar todos os projetos",
+     *     tags={"Projetos"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de projetos"
+     *     )
+     * )
      */
     public function index()
     {
         $clientes = Projeto::with('equipamentos')->get();
         return response()->json($clientes);
     }
-
+    
     /**
-     * @param \Illuminate\Http\Request $request
-     * @return mixed|\Illuminate\Http\JsonResponse
+     * @OA\Post(
+     *     path="/api/projetos",
+     *     summary="Criar um novo projeto",
+     *     tags={"Projetos"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="nome", type="string", example="Fazenda Solar"),
+     *             @OA\Property(property="cliente_id", type="integer", example=1),
+     *             @OA\Property(property="endereco_id", type="integer", example=1),
+     *             @OA\Property(property="instalacao_id", type="integer", example=1),
+     *             @OA\Property(property="equipamentos", type="array", @OA\Items(
+     *                 @OA\Property(property="equipamento_id", type="integer", example=1),
+     *                 @OA\Property(property="quantidade", type="integer", example=1)
+     *             ))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Projeto criado"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Erro ao criar projeto"
+     *     )
+     * )
      */
     public function store(Request $request)
     {
@@ -53,8 +99,39 @@ class ProjetoController extends Controller
     }
 
     /**
-     * @param string $id
-     * @return mixed|\Illuminate\Http\JsonResponse
+     * @OA\Get(
+     *     path="/api/projetos/{id}",
+     *     summary="Obter detalhes de um projeto",
+     *     tags={"Projetos"},
+     *     description="Retorna os detalhes de um projeto específico baseado no ID fornecido.",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID do projeto",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Detalhes do projeto",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id", type="integer", example=1),
+     *             @OA\Property(property="nome", type="string", example="Fazenda Solar"),
+     *             @OA\Property(property="cliente_id", type="integer", example=1),
+     *             @OA\Property(property="endereco_id", type="integer", example=1),
+     *             @OA\Property(property="instalacao_id", type="integer", example=1),
+     *             @OA\Property(property="created_at", type="string", format="date-time", example="2024-09-29T00:00:00Z"),
+     *             @OA\Property(property="updated_at", type="string", format="date-time", example="2024-09-29T00:00:00Z")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Projeto não encontrado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Projeto não encontrado")
+     *         )
+     *     )
+     * )
      */
     public function show(string $id)
     {
@@ -67,9 +144,65 @@ class ProjetoController extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
-     * @param string $id
-     * @return mixed|\Illuminate\Http\JsonResponse
+     * @OA\Put(
+     *     path="/api/projetos/{id}",
+     *     summary="Atualizar um projeto existente",
+     *     tags={"Projetos"},
+     *     description="Atualiza os dados de um projeto com base no ID fornecido. Também permite atualizar os equipamentos associados ao projeto.",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID do projeto a ser atualizado",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="nome", type="string", example="Fazenda Solar Atualizada"),
+     *             @OA\Property(property="cliente_id", type="integer", example=1),
+     *             @OA\Property(property="endereco_id", type="integer", example=1),
+     *             @OA\Property(property="instalacao_id", type="integer", example=1),
+     *             @OA\Property(property="equipamentos", type="array", @OA\Items(
+     *                 @OA\Property(property="equipamento_id", type="integer", example=1),
+     *                 @OA\Property(property="quantidade", type="integer", example=5)
+     *             ))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Projeto atualizado com sucesso",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id", type="integer", example=1),
+     *             @OA\Property(property="nome", type="string", example="Fazenda Solar Atualizada"),
+     *             @OA\Property(property="cliente_id", type="integer", example=1),
+     *             @OA\Property(property="endereco_id", type="integer", example=1),
+     *             @OA\Property(property="instalacao_id", type="integer", example=1),
+     *             @OA\Property(
+     *                 property="equipamentos",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="equipamento_id", type="integer", example=1),
+     *                     @OA\Property(property="quantidade", type="integer", example=5)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Projeto não encontrado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Projeto não encontrado")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Erro ao atualizar o projeto",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Erro ao atualizar o projeto")
+     *         )
+     *     )
+     * )
      */
     public function update(Request $request, string $id)
     {
@@ -110,8 +243,40 @@ class ProjetoController extends Controller
     }
 
     /**
-     * @param string $id
-     * @return mixed|\Illuminate\Http\JsonResponse
+     * @OA\Delete(
+     *     path="/api/projetos/{id}",
+     *     summary="Deletar um projeto",
+     *     tags={"Projetos"},
+     *     description="Deleta um projeto específico baseado no ID fornecido.",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID do projeto a ser deletado",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Projeto deletado com sucesso",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Projetos deletado com sucesso")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Projeto não encontrado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Projetos não encontrado")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Erro ao deletar o projeto",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Erro ao deletar o projeto")
+     *         )
+     *     )
+     * )
      */
     public function destroy(string $id)
     {

@@ -9,7 +9,20 @@ use Illuminate\Http\Request;
 class InstalacaoController extends Controller
 {
     /**
-     * @return mixed|\Illuminate\Http\JsonResponse
+     * @OA\Get(
+     *     path="/api/instalacoes",
+     *     summary="Listar todas as instalações",
+     *     tags={"Instalações"},
+     *     description="Retorna uma lista de todas as instalações.",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de instalações",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Instalacao")
+     *         )
+     *     )
+     * )
      */
     public function index()
     {
@@ -18,8 +31,31 @@ class InstalacaoController extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
-     * @return mixed|\Illuminate\Http\JsonResponse
+     * @OA\Post(
+     *     path="/api/instalacoes",
+     *     summary="Criar uma nova instalação",
+     *     tags={"Instalações"},
+     *     description="Cria uma nova instalação com os dados fornecidos.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"descricao"},
+     *             @OA\Property(property="descricao", type="string", example="Instalação Fotovoltaica", description="Descrição da instalação")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Instalação criada com sucesso",
+     *         @OA\JsonContent(ref="#/components/schemas/Instalacao")
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Erro ao criar instalação",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Erro ao criar instalação")
+     *         )
+     *     )
+     * )
      */
     public function store(Request $request)
     {
@@ -36,8 +72,31 @@ class InstalacaoController extends Controller
     }
 
     /**
-     * @param string $id
-     * @return mixed|\Illuminate\Http\JsonResponse
+     * @OA\Get(
+     *     path="/api/instalacoes/{id}",
+     *     summary="Obter detalhes de uma instalação",
+     *     tags={"Instalações"},
+     *     description="Retorna os detalhes de uma instalação específica baseado no ID fornecido.",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID da instalação",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Detalhes da instalação",
+     *         @OA\JsonContent(ref="#/components/schemas/Instalacao")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Instalação não encontrada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Instalação não encontrada")
+     *         )
+     *     )
+     * )
      */
     public function show(string $id)
     {
@@ -50,9 +109,45 @@ class InstalacaoController extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
-     * @param string $id
-     * @return mixed|\Illuminate\Http\JsonResponse
+     * @OA\Put(
+     *     path="/api/instalacoes/{id}",
+     *     summary="Atualizar uma instalação",
+     *     tags={"Instalações"},
+     *     description="Atualiza os dados de uma instalação existente baseado no ID fornecido.",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID da instalação a ser atualizada",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"descricao"},
+     *             @OA\Property(property="descricao", type="string", example="Instalação Atualizada", description="Descrição da instalação")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Instalação atualizada com sucesso",
+     *         @OA\JsonContent(ref="#/components/schemas/Instalacao")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Instalação não encontrada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Instalação não encontrada")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Erro ao atualizar instalação",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Erro ao atualizar instalação")
+     *         )
+     *     )
+     * )
      */
     public function update(Request $request, string $id)
     {
@@ -73,8 +168,40 @@ class InstalacaoController extends Controller
     }
 
     /**
-     * @param string $id
-     * @return mixed|\Illuminate\Http\JsonResponse
+     * @OA\Delete(
+     *     path="/api/instalacoes/{id}",
+     *     summary="Deletar uma instalação",
+     *     tags={"Instalações"},
+     *     description="Deleta uma instalação existente baseado no ID fornecido.",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID da instalação a ser deletada",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Instalação deletada com sucesso",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Instalação deletada com sucesso")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Instalação não encontrada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Instalação não encontrada")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Erro ao deletar instalação",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Erro ao deletar instalação")
+     *         )
+     *     )
+     * )
      */
     public function destroy(string $id)
     {
