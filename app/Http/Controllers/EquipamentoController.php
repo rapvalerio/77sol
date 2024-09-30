@@ -5,9 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Models\Equipamento;
+use App\Services\EquipamentoServices;
 
 class EquipamentoController extends Controller
 {
+    public $equipamentoService;
+
+    public function __construct(EquipamentoServices $equipamentoService){
+        $this->equipamentoService = $equipamentoService;
+    }
+
     /**
      * @OA\Get(
      *     path="/api/equipamentos",
@@ -26,8 +33,7 @@ class EquipamentoController extends Controller
      */
     public function index()
     {
-        $clientes = Equipamento::all();
-        return response()->json($clientes);
+        return response()->json($this->equipamentoService->buscaEquipamento(), 200);
     }
 
     /**
@@ -64,8 +70,7 @@ class EquipamentoController extends Controller
                 'descricao' => 'required|string|max:100',
             ]);
             
-            $equipamento = Equipamento::create($validatedData);
-            return response()->json($equipamento, 201);
+            return response()->json($this->equipamentoService->criaEquipamento($validatedData), 201);
         } catch(\Exception $e) {
             return response()->json(['error' => $e->getMessage()], status:500);
         }
@@ -101,8 +106,7 @@ class EquipamentoController extends Controller
     public function show(string $id)
     {
         try {
-            $clientes = Equipamento::findOrFail($id);
-            return response()->json($clientes);
+            return response()->json($this->equipamentoService->buscaEquipamento($id), 200);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 404);
         }
@@ -152,14 +156,11 @@ class EquipamentoController extends Controller
     public function update(Request $request, string $id)
     {
         try{
-            $cliente = Equipamento::findOrFail($id);
-
             $validatedData = $request->validate([
                 'descricao' => 'required|string|max:100',
             ]);
 
-            $cliente->update($validatedData);
-            return response()->json($cliente, 200);
+            return response()->json($this->equipamentoService->editaEquipamento($validatedData, $id), 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'equipamento not found'], 404);
         } catch (\Exception $e) {
@@ -206,9 +207,7 @@ class EquipamentoController extends Controller
     public function destroy(string $id)
     {
         try{
-            $cliente = Equipamento::findOrFail($id);
-            $cliente->delete();
-            return response()->json(['Equipamento deletado com sucesso'],200);
+            return response()->json($this->equipamentoService->removerEquipamento($id),200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'equipamento not found'], 404);
         } catch (\Exception $e) {
