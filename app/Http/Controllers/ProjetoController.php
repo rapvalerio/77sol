@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Projeto;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
  * @OA\PathItem(
@@ -118,7 +121,7 @@ class ProjetoController extends Controller
             ]);
 
             $projeto = Projeto::create($validatedData);
-
+            
             $equipamentos = [];
             foreach ($request->equipamentos as $equipamento) {
                 $equipamentos[$equipamento['equipamento_id']] = ['quantidade' => $equipamento['quantidade']];
@@ -172,8 +175,8 @@ class ProjetoController extends Controller
         try {
             $projeto = Projeto::findOrFail($id);
             return response()->json($projeto);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Projeto não encontrado'], 404);
         }
     }
 
