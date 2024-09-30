@@ -3,11 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Instalacao;
+use App\Services\InstalacaoServices;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class InstalacaoController extends Controller
 {
+
+    public $instalacaoServices;
+
+    public function __construct(InstalacaoServices $instalacaoServices){
+        $this->instalacaoServices = $instalacaoServices;
+    }
+
     /**
      * @OA\Get(
      *     path="/api/instalacoes",
@@ -63,9 +71,9 @@ class InstalacaoController extends Controller
             $validatedData = $request->validate([
                 'descricao' => 'required|string|max:100',
             ]);
-            
-            $endereco = Instalacao::create($validatedData);
-            return response()->json($endereco, 201);
+
+            $response = $this->instalacaoServices->criaInstalacao($validatedData);
+            return response()->json($response, 201);
         } catch(\Exception $e) {
             return response()->json(['error' => $e->getMessage()], status:500);
         }
@@ -101,8 +109,7 @@ class InstalacaoController extends Controller
     public function show(string $id)
     {
         try {
-            $clientes = Instalacao::findOrFail($id);
-            return response()->json($clientes);
+            return response()->json($this->instalacaoServices->buscaInstalacao($id), 200);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 404);
         }
@@ -152,14 +159,11 @@ class InstalacaoController extends Controller
     public function update(Request $request, string $id)
     {
         try{
-            $cliente = Instalacao::findOrFail($id);
-
             $validatedData = $request->validate([
                 'descricao' => 'required|string|max:100',
             ]);
 
-            $cliente->update($validatedData);
-            return response()->json($cliente, 200);
+            return response()->json($this->instalacaoServices->editaInstalacao($validatedData, $id), 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Instalação não encontrado'], 404);
         } catch (\Exception $e) {
@@ -206,9 +210,7 @@ class InstalacaoController extends Controller
     public function destroy(string $id)
     {
         try{
-            $cliente = Instalacao::findOrFail($id);
-            $cliente->delete();
-            return response()->json(['Instalação deletado com sucesso'],200);
+            return response()->json($this->instalacaoServices->removerInstalacao($id),200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Instalação não encontrado'], 404);
         } catch (\Exception $e) {
