@@ -3,11 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Endereco;
+use App\Services\EnderecoServices;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class EnderecoController extends Controller
 {
+    public $enderecoService;
+
+    public function __construct(EnderecoServices $enderecoService){
+        $this->enderecoService = $enderecoService;
+    }
     /**
      * @OA\Get(
      *     path="/api/enderecos",
@@ -61,11 +67,10 @@ class EnderecoController extends Controller
     {
         try{
             $validatedData = $request->validate([
-                'uf' => 'required|string|size:2|in:SP,RJ,AM,BA,MG,ES,SC,RS,PR,PE,PB,AL,SE,DF,GO,MT,MS,TO,MA,PI,CE,RN,PA,AP,RR,RO,AC',
+                'uf' => 'required|string|size:2',
             ]);
             
-            $endereco = Endereco::create($validatedData);
-            return response()->json($endereco, 201);
+            return response()->json($this->enderecoService->criaEndereco($validatedData), 201);
         } catch(\Exception $e) {
             return response()->json(['error' => $e->getMessage()], status:500);
         }
@@ -101,8 +106,7 @@ class EnderecoController extends Controller
     public function show(string $id)
     {
         try {
-            $clientes = Endereco::findOrFail($id);
-            return response()->json($clientes);
+            return response()->json($this->enderecoService->buscaEndereco($id), 200);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 404);
         }
@@ -152,15 +156,13 @@ class EnderecoController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            $cliente = Endereco::findOrFail($id);
+            // $cliente = Endereco::findOrFail($id);
 
             $validatedData = $request->validate([
-                'uf' => 'sometimes|required|string|size:2|in:SP,RJ,AM,BA,MG,ES,SC,RS,PR,PE,PB,AL,SE,DF,GO,MT,MS,TO,MA,PI,CE,RN,PA,AP,RR,RO,AC',
+                'uf' => 'sometimes|required|string|size:2',
             ]);
 
-
-            $cliente->update($validatedData);
-            return response()->json($cliente, 200);
+            return response()->json($this->enderecoService->editaEndereco($validatedData, $id), 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Endereço não encontrado'], 404);
         } catch (\Exception $e) {
@@ -208,9 +210,7 @@ class EnderecoController extends Controller
     public function destroy(string $id)
     {
         try {
-            $cliente = Endereco::findOrFail($id);
-            $cliente->delete();
-            return response()->json(['Endereço deletado com sucesso'],200);
+            return response()->json($this->enderecoService->removerEndereco($id),200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Endereço não encontrado'], 404);
         } catch (\Exception $e) {
