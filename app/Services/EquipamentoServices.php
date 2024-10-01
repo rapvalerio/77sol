@@ -3,6 +3,7 @@ namespace App\Services;
 use App\Entities\EquipamentoEntity;
 use App\Models\Equipamento;
 use App\Repositories\EquipamentoRepository;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class EquipamentoServices {
 
@@ -27,9 +28,20 @@ class EquipamentoServices {
     }
 
     public function editaEquipamento(array $data, string $id){
-        $equipamentoEntity = new EquipamentoEntity($data['descricao']);
+        $equipamento = $this->equipamentoRepository->findById($id);
+
+        if(!$equipamento){
+            throw new ModelNotFoundException();
+        }
+
+        $equipamentoEntity = new EquipamentoEntity($equipamento['descricao']);
+
+        $descricao = isset($data['descricao'])?$data['descricao']:$equipamentoEntity->getDescricao();
+
         $equipamentoEntity->setId($id);
-        return $this->equipamentoRepository->update($id, $equipamentoEntity->toArray());
+        return $this->equipamentoRepository->update($id, [
+            'descricao'=> $descricao
+        ]);
     }
 
     public function removerEquipamento(string $id){

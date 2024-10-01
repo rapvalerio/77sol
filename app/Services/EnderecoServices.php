@@ -3,6 +3,7 @@ namespace App\Services;
 use App\Entities\EnderecoEntity;
 use App\Models\Endereco;
 use App\Repositories\EnderecoRepository;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class EnderecoServices {
 
@@ -26,9 +27,21 @@ class EnderecoServices {
     }
 
     public function editaEndereco(array $data, string $id){
-        $enderecoEntity = new EnderecoEntity($data['uf']);
+        $endereco = $this->enderecoRepository->findById($id);
+
+        if(!$endereco){
+            throw new ModelNotFoundException();
+        }
+
+        $enderecoEntity = new EnderecoEntity($endereco['uf']);
+
+        $uf = isset($data['uf'])?$data['uf']:$enderecoEntity->getUf();
+
         $enderecoEntity->setId($id);
-        return $this->enderecoRepository->update($id, $enderecoEntity->toArray());
+
+        return $this->enderecoRepository->update($id, [
+            'uf'=> $uf
+        ]);
     }
 
     public function removerEndereco(string $id){

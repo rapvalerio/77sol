@@ -19,6 +19,10 @@ class ProjetoServices {
     }
 
     public function buscaProjeto(array $data){
+        if(isset($data['id'])){
+            return $this->projetoRepository->find(['id' => $data['id']]);
+        }
+
         return $this->projetoRepository->find($data);
     }
 
@@ -42,11 +46,7 @@ class ProjetoServices {
     }
 
     public function removerProjeto(string $id){
-        $projeto = $this->projetoRepository->findById($id);
-    
-        if (!$projeto) {
-            throw new \Exception('Projeto não encontrado.');
-        }
+        $this->projetoRepository->findById($id);
 
         return $this->projetoRepository->delete($id);
     }

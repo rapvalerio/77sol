@@ -14,13 +14,7 @@ class ProjetoEquipamentoRepository{
     }
 
     public function findById($id){
-        $projeto = ProjetoEquipamento::find($id);
-
-        if (!$projeto) {
-            throw new \Exception('Equipamentos do projeto não encontrados.');
-        }
-
-        return $projeto;
+        return ProjetoEquipamento::findOrFail($id);
     }
 
     public function update(string $id, array $data){

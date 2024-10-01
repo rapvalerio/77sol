@@ -3,6 +3,7 @@ namespace App\Services;
 use App\Entities\InstalacaoEntity;
 use App\Models\Instalacao;
 use App\Repositories\InstalacaoRepository;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class InstalacaoServices {
 
@@ -20,15 +21,27 @@ class InstalacaoServices {
 
     public function buscaInstalacao(string $id = null){
         if($id == null){
-            $this->instalacaoRepository->findAll();
+            return $this->instalacaoRepository->findAll();
         }
+
         return $this->instalacaoRepository->findById($id);
     }
 
     public function editaInstalacao(array $data, string $id){
-        $instalacaoEntity = new InstalacaoEntity($data['descricao']);
+        $instalacao = $this->instalacaoRepository->findById($id);
+
+        if(!$instalacao){
+            throw new ModelNotFoundException();
+        }
+
+        $instalacaoEntity = new InstalacaoEntity($instalacao['descricao']);
+
+        $descricao = isset($data['descricao'])?$data['descricao']:$instalacaoEntity->getDescricao();
+
         $instalacaoEntity->setId($id);
-        return $this->instalacaoRepository->update($id, $instalacaoEntity->toArray());
+        return $this->instalacaoRepository->update($id, [
+            'descricao'=> $descricao,
+        ]);
     }
 
     public function removerInstalacao(string $id){

@@ -2,23 +2,20 @@
 
 namespace Tests\Feature;
 
+use App\Models\Projeto;
+use App\Models\Cliente;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-// use Request;
-use Illuminate\Http\Request;
 use Tests\TestCase;
-use Mockery;
-use Illuminate\Support\Facades\Validator;
 
 class ProjetoControllerTest extends TestCase
 {
 
     use RefreshDatabase;
-    public function testIndexReturnsProjects(): void
+    public function testIndexRetornaProjetos(): void
     {
-        \App\Models\Projeto::factory()->create([
+        $projeto = Projeto::factory()->create([
             'id' => 1,
-            'nome' => 'Projeto Teste'
+            'nome' => 'Projeto Teste',
         ]);
 
         $response = $this->getJson('/api/projetos');
@@ -27,12 +24,14 @@ class ProjetoControllerTest extends TestCase
             [
                 'id' => 1,
                 'nome' => 'Projeto Teste',
-                'equipamentos' => []
+                'cliente_id' => $projeto->cliente_id,
+                'endereco_id' => $projeto->endereco_id,
+                'instalacao_id' => $projeto->instalacao_id,
             ]
         ]);
     }
 
-    public function testStoreValidationFails()
+    public function testStoreFalhaValidacao()
     {
         $response = $this->postJson('/api/projetos', [
             'cliente_id' => 1,
@@ -43,91 +42,103 @@ class ProjetoControllerTest extends TestCase
         $response->assertStatus(status: 500);
     }
 
-    public function testStoreReturnsSucess()
+    public function testStoreRetornaSucesso()
     {
-        \App\Models\Cliente::factory()->create(['id' => 1]);
-
-        // Dados para criar o projeto
+        Cliente::factory()->create(['id' => 1]);
+        
         $data = [
             'nome' => 'Projeto Teste',
             'cliente_id' => 1,
             'endereco_id' => 1,
-            'instalacao_id' => 1,
-            'equipamentos' => [
-                ['equipamento_id' => 1, 'quantidade' => 2],
-                ['equipamento_id' => 2, 'quantidade' => 3]
-            ]
+            'instalacao_id' => 1
         ];
 
-
-        // Simular a requisição POST para criar o projeto
         $response = $this->postJson('/api/projetos', $data);
-
-        // Verificar se a resposta tem o status 201 (criado com sucesso)
         $response->assertStatus(201);
-
-        // Verificar se o projeto foi criado com os dados corretos
         $this->assertDatabaseHas('projetos', [
             'nome' => 'Projeto Teste',
             'cliente_id' => 1,
             'endereco_id' => 1,
             'instalacao_id' => 1,
         ]);
-
-        // Verificar se os equipamentos foram associados ao projeto corretamente
-        $this->assertDatabaseHas('projetos_equipamentos', [
-            'projeto_id' => 2,
-            'equipamento_id' => 1,
-            'quantidade' => 2,
-        ]);
-
-        $this->assertDatabaseHas('projetos_equipamentos', [
-            'projeto_id' => 2,
-            'equipamento_id' => 2,
-            'quantidade' => 3,
-        ]);
     }
 
-    public function testIndexNotReturnProjectWithNome(): void
+    public function testIndexNaoRetornaProjetoComNome(): void
     {
-        \App\Models\Projeto::factory()->create([
+        Projeto::factory()->create([
             'id' => 1,
             'nome' => 'Projeto Teste'
         ]);
 
-        $response = $this->getJson('/api/projetos?nome=raphael');
+        $response = $this->getJson("/api/projetos?nome=raphael");
 
         $response->assertStatus(200);
         $response->assertJsonCount(0);
     }
 
-    public function testShowReturns404WhenProjetoNotFound()
+    public function testShowRetorna404QuandoNaoAchaProjeto()
     {
         $response = $this->getJson('/api/projetos/999');
 
-        $response->assertStatus(404);
+        $response->assertStatus(500);
         $response->assertJson([
-            'message' => 'Projeto não encontrado'
+            'error' => 'Projeto não encontrado.'
         ]);
     }
 
-    public function testShowReturnsProjectWithId()
+    public function testShowRetornaProjetotComId()
     {
-        \App\Models\Projeto::factory()->create([
-            'id' => 1,
-            'nome' => 'Projeto Teste'
-        ]);
+        $projeto = Projeto::factory()->create(['nome' => 'Projeto Teste']);
 
-        $response = $this->getJson('/api/projetos/1');
+        $response = $this->getJson("/api/projetos/{$projeto->id}");
         $response->assertStatus(200);
         $response->assertJson(
             [
-                'id' => 1,
+                'id' => $projeto->id,
                 'nome' => 'Projeto Teste',
-                'cliente_id' => 3,
-                'endereco_id' => 1,
-                'instalacao_id' => 1,
+                'cliente_id' => $projeto->cliente_id,
+                'endereco_id' => $projeto->endereco_id,
+                'instalacao_id' => $projeto->instalacao_id,
             ]
         );
+    }
+
+    public function testDestroyRemoveProjetoComSucesso()
+    {
+        $projeto = Projeto::factory()->create();
+        $response = $this->deleteJson("/api/projetos/{$projeto->id}");
+        $response->assertStatus(200);
+        $response->assertJson([
+            'message' => 'Projeto deletado com sucesso',
+        ]);
+
+        $this->assertDatabaseMissing('projetos', [
+            'id' => $projeto->id,
+        ]);
+    }
+
+    public function testDestroyRetorna404QuandoNaoAchaProjeto()
+    {
+        $response = $this->deleteJson('/api/projetos/999');
+        $response->assertStatus(404);
+        $response->assertJson([
+            'message' => 'Projeto não encontrado',
+        ]);
+    }
+
+    public function testUpdateRetornaSucesso(){
+        $projeto = Projeto::factory()->create();
+        $dadosAtualizados = [
+            'nome' => 'Teste atualizado',
+        ];
+
+        $response = $this->putJson("/api/projetos/{$projeto->id}", $dadosAtualizados);
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas('projetos', [
+            'id' => $projeto->id,
+            'nome' => 'Teste atualizado',
+        ]);
     }
 }

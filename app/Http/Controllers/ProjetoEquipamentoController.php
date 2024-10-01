@@ -203,7 +203,7 @@ class ProjetoEquipamentoController extends Controller
             ]);
             return response()->json($this->service->editar($validatedData, $id), 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Equipamento do projeto não encontrados'], 404);
+            return response()->json(['message' => 'Equipamentos do projeto não encontrados'], 404);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erro ao atualizar o projeto: ' . $e->getMessage()], 500);
         }

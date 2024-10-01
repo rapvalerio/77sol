@@ -164,7 +164,7 @@ class InstalacaoController extends Controller
 
             return response()->json($this->instalacaoServices->editaInstalacao($validatedData, $id), 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Instalação não encontrado'], 404);
+            return response()->json(['message' => 'Instalação não encontrada'], 404);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erro ao atualizar a instalação: ' . $e->getMessage()], 500);
         }

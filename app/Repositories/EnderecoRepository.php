@@ -10,7 +10,7 @@ class EnderecoRepository{
     }
 
     public function findById(int $id) {
-        return Endereco::find($id);
+        return Endereco::findOrFail($id);
     }
 
     public function findAll(){

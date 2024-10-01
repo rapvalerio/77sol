@@ -12,12 +12,16 @@ class ProjetoRepository{
     public function find(array $data) {
         $query = Projeto::query();
 
-        // Filtrar por ID, se fornecido
         if (isset($data['id'])) {
-            return $query->where('id', $data['id'])->get();
+            $result =  $query->where('id', $data['id'])->get();
+            
+            if ($result->isEmpty()) {
+                throw new \Exception('Projeto não encontrado.');
+            }
+
+            return $result->first();
         }
 
-        // Filtrar por nome, se fornecido
         if (isset($data['nome'])) {
             return $query->where('nome', 'like', '%' . $data['nome'] . '%')->get();
         }
@@ -26,11 +30,7 @@ class ProjetoRepository{
     }
 
     public function findById($id){
-        $projeto = Projeto::find($id);
-
-        if (!$projeto) {
-            throw new \Exception('Projeto não encontrado.');
-        }
+        $projeto = Projeto::findOrFail($id);
 
         return $projeto;
     }

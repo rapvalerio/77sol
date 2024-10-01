@@ -2,6 +2,7 @@
 namespace App\Services;
 use App\Entities\ProjetoEquipamentoEntity;
 use App\Repositories\ProjetoEquipamentoRepository;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ProjetoEquipamentoServices {
 
@@ -20,7 +21,8 @@ class ProjetoEquipamentoServices {
 
     public function buscar(string $id = null){
         if($id == null){
-            return $this->projetoEquipamentoRepository->findAll();
+            return  $this->projetoEquipamentoRepository->findAll();
+            // dd($return->toArray());
         }
 
         $projetoEquipamento = $this->projetoEquipamentoRepository->findById($id);
@@ -36,7 +38,7 @@ class ProjetoEquipamentoServices {
         $projetoEquipamento = $this->projetoEquipamentoRepository->findById($id);
         
         if (!$projetoEquipamento) {
-            throw new \Exception('Equipamento do projeto não encontrados.');
+            throw new ModelNotFoundException();
         }
 
         $projetoEquipamentoEntity = new ProjetoEquipamentoEntity($projetoEquipamento['projeto_id'], $projetoEquipamento['equipamento_id'], $projetoEquipamento['quantidade']);

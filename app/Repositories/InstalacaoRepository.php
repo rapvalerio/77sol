@@ -10,7 +10,7 @@ class InstalacaoRepository{
     }
 
     public function findById(int $id): ?Instalacao {
-        return Instalacao::find($id);
+        return Instalacao::findOrFail($id);
     }
 
     public function findAll(){

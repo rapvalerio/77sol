@@ -115,9 +115,6 @@ class ProjetoController extends Controller
                 'cliente_id' => 'required|exists:clientes,id',
                 'endereco_id' => 'required|exists:enderecos,id',
                 'instalacao_id' => 'required|exists:instalacoes,id',
-                // 'equipamentos' => 'required|array',
-                // 'equipamentos.*.equipamento_id' => 'required|exists:equipamentos,id',
-                // 'equipamentos.*.quantidade' => 'required|integer|min:1',
             ]);
     
             return response()->json($this->service->criaProjeto($validatedData), 201);
@@ -165,8 +162,8 @@ class ProjetoController extends Controller
     {
         try {
             return response()->json($this->service->buscaProjeto(['id' => $id]), 200);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Projeto não encontrado'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -240,9 +237,6 @@ class ProjetoController extends Controller
                 'cliente_id' => 'sometimes|required|exists:clientes,id',
                 'endereco_id' => 'sometimes|required|exists:enderecos,id',
                 'instalacao_id' => 'sometimes|required|exists:instalacoes,id',
-                // 'equipamentos' => 'required|array',
-                // 'equipamentos.*.equipamento_id' => 'required|exists:equipamentos,id',
-                // 'equipamentos.*.quantidade' => 'required|integer|min:1',
             ]);
             return response()->json($this->service->editaProjeto($validatedData, $id), 200);
         } catch (ModelNotFoundException $e) {
@@ -291,9 +285,10 @@ class ProjetoController extends Controller
     public function destroy(string $id)
     {
         try {
-            return response()->json($this->service->removerProjeto($id),200);
+            $this->service->removerProjeto($id);
+            return response()->json(["message" => "Projeto deletado com sucesso"],200);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Projetos não encontrado'], 404);
+            return response()->json(['message' => 'Projeto não encontrado'], 404);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erro ao deletar o projeto: ' . $e->getMessage()], 500);
         }

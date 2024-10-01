@@ -155,8 +155,6 @@ class EnderecoController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            // $cliente = Endereco::findOrFail($id);
-
             $validatedData = $request->validate([
                 'uf' => 'sometimes|required|string|size:2',
             ]);

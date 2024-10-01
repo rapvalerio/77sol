@@ -2,6 +2,7 @@
 namespace App\Services;
 use App\Entities\ClienteEntity;
 use App\Repositories\ClienteRepository;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ClienteServices {
 
@@ -36,7 +37,7 @@ class ClienteServices {
         $cliente = $this->clienteRepository->findById($id);
 
         if (!$cliente) {
-            throw new \Exception('Cliente não encontrado.');
+            throw new ModelNotFoundException();
         }
 
         $clienteEntity = new ClienteEntity($cliente['nome'], $cliente['email'], $cliente['telefone'], $cliente['documento']);

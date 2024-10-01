@@ -162,7 +162,7 @@ class EquipamentoController extends Controller
 
             return response()->json($this->equipamentoService->editaEquipamento($validatedData, $id), 200);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'equipamento not found'], 404);
+            return response()->json(['message' => 'Equipamento não encontrado'], 404);
         } catch (\Exception $e) {
             return response()->json(['error' => 'erro ao atualizar o equipamento: ' . $e->getMessage()], 500);
         }

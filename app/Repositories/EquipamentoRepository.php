@@ -10,7 +10,7 @@ class EquipamentoRepository{
     }
 
     public function findById(int $id) {
-        return Equipamento::find($id);
+        return Equipamento::findOrFail($id);
     }
 
     public function findAll(){
