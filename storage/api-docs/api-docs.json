@@ -1621,6 +1621,428 @@
                     }
                 }
             }
+        },
+        "/api/projetos-equipamentos": {
+            "get": {
+                "tags": [
+                    "ProjetosEquipamento"
+                ],
+                "summary": "Obter a lista de todos os registros de projetos e seus equipamentos",
+                "operationId": "9754eb3ebe461d567df00d7e61f26bd9",
+                "responses": {
+                    "200": {
+                        "description": "Lista de todos os registros de projetos e seus equipamentos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "projeto_id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "equipamento_id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "quantidade": {
+                                                "type": "integer",
+                                                "example": 5
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2024-09-30T00:00:00Z"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2024-09-30T00:00:00Z"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro ao obter a lista"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "ProjetosEquipamento"
+                ],
+                "summary": "Criar uma nova associação entre projeto e equipamento",
+                "operationId": "59976b818f85f1b6d439a3f59c851f6d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "projeto_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "equipamento_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "quantidade": {
+                                        "type": "integer",
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Associação criada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "projeto_id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "equipamento_id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "quantidade": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2024-09-30T00:00:00Z"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2024-09-30T00:00:00Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos fornecidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Validation error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno ao criar a associação",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erro ao criar a associação"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/projetos-equipamentos/{id}": {
+            "get": {
+                "tags": [
+                    "ProjetosEquipamento"
+                ],
+                "summary": "Obter equipamentos associados a um projeto",
+                "description": "Retorna a associação de equipamentos para um projeto específico com base no ID fornecido.",
+                "operationId": "826d738c169d0506fd706a14bc3052a5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do projeto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Equipamentos associados ao projeto",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "projeto_id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "equipamento_id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "quantidade": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2024-09-30T00:00:00Z"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2024-09-30T00:00:00Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Equipamentos do projeto não encontrados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Equipamentos do projeto não encontrados"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "ProjetosEquipamento"
+                ],
+                "summary": "Atualizar equipamento associado a um projeto",
+                "description": "Atualiza os dados de um equipamento associado a um projeto com base no ID fornecido. Permite atualizar o projeto_id, equipamento_id e a quantidade.",
+                "operationId": "e8ca12b8ed4493bac3fde148fa64b59d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do equipamento do projeto a ser atualizado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "projeto_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "equipamento_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "quantidade": {
+                                        "type": "integer",
+                                        "example": 10
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Equipamento do projeto atualizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "projeto_id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "equipamento_id": {
+                                            "type": "integer",
+                                            "example": 2
+                                        },
+                                        "quantidade": {
+                                            "type": "integer",
+                                            "example": 10
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2024-09-30T00:00:00Z"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2024-09-30T00:00:00Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Equipamento do projeto não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Equipamento do projeto não encontrados"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro ao atualizar o projeto",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erro ao atualizar o projeto"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "ProjetosEquipamento"
+                ],
+                "summary": "Deletar equipamento associado a um projeto",
+                "description": "Deleta um equipamento associado a um projeto com base no ID fornecido.",
+                "operationId": "43d70192d2cc4e40a5c26368e73239bb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do equipamento do projeto a ser deletado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Equipamento do projeto deletado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Equipamento do projeto deletado com sucesso"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Equipamento do projeto não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Equipamento do projeto não encontrado"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro ao deletar o equipamento do projeto",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Erro ao deletar o projeto"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -1811,6 +2233,10 @@
         {
             "name": "Projetos",
             "description": "Projetos"
+        },
+        {
+            "name": "ProjetosEquipamento",
+            "description": "ProjetosEquipamento"
         }
     ]
 }
