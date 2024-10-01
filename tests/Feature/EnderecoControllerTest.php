@@ -20,7 +20,7 @@ class EnderecoControllerTest extends TestCase
 
     public function testShowRetornaEndereco()
     {
-        $endereco = Endereco::factory()->create();
+        $endereco = Endereco::first();
         $response = $this->getJson("/api/enderecos/{$endereco->id}");
         $response->assertStatus(200);
         $response->assertJson([
@@ -62,7 +62,7 @@ class EnderecoControllerTest extends TestCase
 
     public function testUpdateAtualizaEndereco()
     {
-        $endereco = Endereco::factory()->create();
+        $endereco = Endereco::first();
         $dadosAtualizados = [
             'uf' => 'VV',
         ];

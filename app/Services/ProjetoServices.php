@@ -13,9 +13,15 @@ class ProjetoServices {
     }
 
     public function criaProjeto(array $data){
-        $projetoEntity = new ProjetoEntity($data['nome'], $data['cliente_id'], $data['endereco_id'], $data['instalacao_id']);
+        $projetoEntity = new ProjetoEntity(
+            $data['nome'], 
+            $data['cliente_id'], 
+            $data['endereco_id'], 
+            $data['instalacao_id']);
 
-        return $this->projetoRepository->create($projetoEntity->toArray());
+        $equipamentosData = $data['equipamentos'] ?? [];
+
+        return $this->projetoRepository->create($projetoEntity, $equipamentosData);
     }
 
     public function buscaProjeto(array $data){
@@ -28,26 +34,22 @@ class ProjetoServices {
 
     public function editaProjeto(array $data, string $id){
         $projeto = $this->projetoRepository->findById($id);
-        $projetoEntity = new ProjetoEntity($projeto['nome'], $projeto['cliente_id'], $projeto['endereco_id'], $projeto['instalacao_id']);
-
-        $nome = isset($data['nome'])?$data['nome']:$projetoEntity->getNome();
-        $clienteId = isset($data['cliente_id'])?$data['cliente_id']:$projetoEntity->getClienteId();
-        $enderecoId = isset($data['endereco_id'])?$data['endereco_id']:$projetoEntity->getEnderecoId();
-        $instalacaoId = isset($data['instalacao_id'])?$data['instalacao_id']:$projetoEntity->getInstalacaoId();
+        
+        $projetoEntity = new ProjetoEntity(
+            $data['nome'] ?? $projeto->nome,
+            $data['cliente_id'] ?? $projeto->cliente_id,
+            $data['endereco_id'] ?? $projeto->endereco_id,
+            $data['instalacao_id'] ?? $projeto->instalacao_id
+        );
 
         $projetoEntity->setId($id);
 
-        return $this->projetoRepository->update($id, [
-            'nome' => $nome,
-            'cliente_id' => $clienteId,
-            'endereco_id' => $enderecoId,
-            'instalacao_id' => $instalacaoId
-        ]);
+        $equipamentosData = $data['equipamentos'] ?? null;
+
+        return $this->projetoRepository->update($projetoEntity,$equipamentosData);
     }
 
     public function removerProjeto(string $id){
-        $this->projetoRepository->findById($id);
-
         return $this->projetoRepository->delete($id);
     }
 }

@@ -2,6 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Endereco;
+use App\Models\Equipamento;
+use App\Models\Instalacao;
 use App\Models\Projeto;
 use App\Models\Cliente;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -44,22 +47,47 @@ class ProjetoControllerTest extends TestCase
 
     public function testStoreRetornaSucesso()
     {
-        Cliente::factory()->create(['id' => 1]);
+        $cliente = Cliente::factory()->create();
+        $endereco = Endereco::first();
+        $equipamento = Equipamento::first();
+        $instalacao = Instalacao::first();
         
         $data = [
-            'nome' => 'Projeto Teste',
-            'cliente_id' => 1,
-            'endereco_id' => 1,
-            'instalacao_id' => 1
+            'nome' => 'Projeto',
+            'cliente_id' => $cliente->id,
+            'endereco_id' => $endereco->id,
+            'instalacao_id' => $instalacao->id,
+            'equipamentos' => [
+                [
+                    'equipamento_id' => $equipamento->id,
+                    'quantidade' => 5,
+                ]
+            ]
         ];
 
         $response = $this->postJson('/api/projetos', $data);
-        $response->assertStatus(201);
+        // dd($response->getContent());
+        $response->assertStatus(201)
+                ->assertJsonFragment([
+                    'nome' => 'Projeto',
+                    'cliente_id' => $cliente->id,
+                    'endereco_id' => $endereco->id,
+                    'instalacao_id' => $instalacao->id,
+                ]);
+
         $this->assertDatabaseHas('projetos', [
-            'nome' => 'Projeto Teste',
-            'cliente_id' => 1,
-            'endereco_id' => 1,
-            'instalacao_id' => 1,
+            'nome' => 'Projeto',
+            'cliente_id' => $cliente->id,
+            'endereco_id' => $endereco->id,
+            'instalacao_id' => $instalacao->id,
+        ]);
+
+        $projeto = Projeto::where('nome', 'Projeto')->first();
+
+        $this->assertDatabaseHas('projetos_equipamentos', [
+            'projeto_id' => $projeto->id,
+            'equipamento_id' => $equipamento->id,
+            'quantidade' => 5,
         ]);
     }
 
@@ -128,8 +156,16 @@ class ProjetoControllerTest extends TestCase
 
     public function testUpdateRetornaSucesso(){
         $projeto = Projeto::factory()->create();
+        $equipamento = Equipamento::first();
+
         $dadosAtualizados = [
             'nome' => 'Teste atualizado',
+            'equipamentos' => [
+                [
+                    'equipamento_id' => $equipamento->id,
+                    'quantidade' => 8,
+                ]
+            ]
         ];
 
         $response = $this->putJson("/api/projetos/{$projeto->id}", $dadosAtualizados);
@@ -139,6 +175,11 @@ class ProjetoControllerTest extends TestCase
         $this->assertDatabaseHas('projetos', [
             'id' => $projeto->id,
             'nome' => 'Teste atualizado',
+        ]);
+
+        $this->assertDatabaseHas('projetos_equipamentos', [
+            'equipamento_id' => $equipamento->id,
+            'quantidade' => 8,
         ]);
     }
 }

@@ -30,4 +30,3 @@ Route::apiResource('equipamentos', EquipamentoController::class);
 Route::apiResource('enderecos', EnderecoController::class);
 Route::apiResource('instalacoes', InstalacaoController::class);
 Route::apiResource('projetos', ProjetoController::class);
-Route::apiResource('projetos-equipamentos', ProjetoEquipamentoController::class);

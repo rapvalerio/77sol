@@ -115,6 +115,9 @@ class ProjetoController extends Controller
                 'cliente_id' => 'required|exists:clientes,id',
                 'endereco_id' => 'required|exists:enderecos,id',
                 'instalacao_id' => 'required|exists:instalacoes,id',
+                'equipamentos' => 'required|array|min:1',
+                'equipamentos.*.equipamento_id' => 'required|exists:equipamentos,id',
+                'equipamentos.*.quantidade' => 'required|integer|min:1',
             ]);
     
             return response()->json($this->service->criaProjeto($validatedData), 201);
@@ -231,17 +234,21 @@ class ProjetoController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-
             $validatedData = $request->validate([
                 'nome' => 'sometimes|required|string|max:100',
                 'cliente_id' => 'sometimes|required|exists:clientes,id',
                 'endereco_id' => 'sometimes|required|exists:enderecos,id',
                 'instalacao_id' => 'sometimes|required|exists:instalacoes,id',
+                'equipamentos' => 'sometimes|array|min:1',
+                'equipamentos.*.equipamento_id' => 'required_with:equipamentos|exists:equipamentos,id',
+                'equipamentos.*.quantidade' => 'required_with:equipamentos|integer|min:1',
             ]);
+
             return response()->json($this->service->editaProjeto($validatedData, $id), 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Projetos não encontrado'], 404);
         } catch (\Exception $e) {
+            dd($e->getMessage());
             return response()->json(['error' => 'Erro ao atualizar o projeto: ' . $e->getMessage()], 500);
         }
     }
