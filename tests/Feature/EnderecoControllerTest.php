@@ -10,6 +10,7 @@ class EnderecoControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    //TODO: Pensar em uma maneira de melhorar esse teste, as vezes ele tenta criar um estado que ja existe e acaba falahndo o teste
     public function testIndexRetorna2Endereco(): void
     {
         Endereco::factory()->create();
