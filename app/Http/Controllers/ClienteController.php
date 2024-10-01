@@ -6,9 +6,16 @@ use App\Rules\Documento;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Models\Cliente;
+use App\Services\ClienteServices;
 
 class ClienteController extends Controller
 {
+    public $clienteService;
+
+    public function __construct(ClienteServices $clienteService){
+        $this->clienteService = $clienteService;
+    }
+
     /**
      * @OA\Get(
      *     path="/api/clientes",
@@ -27,8 +34,7 @@ class ClienteController extends Controller
      */
     public function index()
     {
-        $clientes = Cliente::all();
-        return response()->json($clientes);
+        return response()->json($this->clienteService->buscaCliente(), 200);
     }
 
     /**
@@ -61,8 +67,7 @@ class ClienteController extends Controller
     public function show(string $id)
     {
         try {
-            $clientes = Cliente::findOrFail($id);
-            return response()->json($clientes);
+            return response()->json($this->clienteService->buscaCliente($id), 200 );
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 404);
         }
@@ -108,8 +113,7 @@ class ClienteController extends Controller
                 'documento' => ['required','string','max:20', new Documento],
             ]);
             
-            $cliente = Cliente::create($validatedData);
-            return response()->json($cliente, 201);
+            return response()->json($this->clienteService->criaCliente($validatedData), 201);
         } catch(\Exception $e){
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -162,7 +166,6 @@ class ClienteController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            $cliente = Cliente::findOrFail($id);
 
             $validatedData = $request->validate([
                 'nome' => 'required|string|max:100',
@@ -171,8 +174,7 @@ class ClienteController extends Controller
                 'documento' => ['required','string','max:20', new Documento]
             ]);
 
-            $cliente->update($validatedData);
-            return response()->json($cliente,200);
+            return response()->json($this->clienteService->editaCliente($validatedData, $id),200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Cliente não encontrado'], 404);            
         } catch (\Exception $e) {
@@ -219,9 +221,7 @@ class ClienteController extends Controller
     public function destroy(string $id)
     {
         try {
-            $cliente = Cliente::findOrFail($id);
-            $cliente->delete();
-            return response()->json(['Cliente deletado com sucesso'],200);
+            return response()->json($this->clienteService->removerCliente($id),200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Cliente não encontrado'], 404);            
         } catch (\Exception $e) {
