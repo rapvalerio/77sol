@@ -27,6 +27,11 @@ Para gerar o Swagger:
 ```
 docker-compose exec app php artisan l5-swagger:generate
 ```
+Para acessar a documentação
+```
+http://localhost:8000/api/documentation#/
+```
+
 ## Rodando os testes
 
 Para rodar os testes, rode o seguinte comando
