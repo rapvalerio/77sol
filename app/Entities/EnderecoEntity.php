@@ -3,8 +3,8 @@
 namespace App\Entities;
 
 class EnderecoEntity {
-    public $id;
-    public $uf;
+    private $id;
+    private $uf;
 
     public function __construct($uf) {
         $this->uf = $uf;

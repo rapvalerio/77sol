@@ -3,8 +3,8 @@
 namespace App\Entities;
 
 class InstalacaoEntity {
-    public $id;
-    public $descricao;
+    private $id;
+    private $descricao;
 
     public function __construct($descricao) {
         $this->descricao = $descricao;

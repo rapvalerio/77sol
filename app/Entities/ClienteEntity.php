@@ -3,11 +3,11 @@
 namespace App\Entities;
 
 class ClienteEntity {
-    public $id;
-    public $nome;
-    public $email;
-    public $telefone;
-    public $documento;
+    private $id;
+    private $nome;
+    private $email;
+    private $telefone;
+    private $documento;
 
     public function __construct($nome, $email, $telefone, $documento) {
         $this->nome = $nome;
