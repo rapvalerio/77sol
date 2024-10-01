@@ -32,8 +32,7 @@ class EnderecoController extends Controller
      */
     public function index()
     {
-        $clientes = Endereco::all();
-        return response()->json($clientes);
+        return response()->json($this->enderecoService->buscaEndereco(), 200);
     }
 
     /**

@@ -13,6 +13,10 @@ class EnderecoRepository{
         return Endereco::find($id);
     }
 
+    public function findAll(){
+        return Endereco::all();
+    }
+
     public function update(string $id, array $data){
         $endereco = Endereco::find($id);
         

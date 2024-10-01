@@ -18,7 +18,10 @@ class InstalacaoServices {
         return $this->instalacaoRepository->create($instalacaoEntity->toArray());
     }
 
-    public function buscaInstalacao(string $id){
+    public function buscaInstalacao(string $id = null){
+        if($id == null){
+            $this->instalacaoRepository->findAll();
+        }
         return $this->instalacaoRepository->findById($id);
     }
 

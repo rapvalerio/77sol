@@ -18,7 +18,10 @@ class EnderecoServices {
         return $this->enderecoRepository->create($enderecoEntity->toArray());
     }
 
-    public function buscaEndereco(string $id){
+    public function buscaEndereco(string $id = null){
+        if($id == null){
+            return $this->enderecoRepository->findAll();
+        }
         return $this->enderecoRepository->findById($id);
     }
 

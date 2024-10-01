@@ -13,6 +13,10 @@ class InstalacaoRepository{
         return Instalacao::find($id);
     }
 
+    public function findAll(){
+        return Instalacao::all();
+    }
+
     public function update(string $id, array $data){
         $instalacao = Instalacao::find($id);
         

@@ -34,8 +34,7 @@ class InstalacaoController extends Controller
      */
     public function index()
     {
-        $clientes = Instalacao::all();
-        return response()->json($clientes);
+        return response()->json($this->instalacaoServices->buscaInstalacao(), 200);
     }
 
     /**
