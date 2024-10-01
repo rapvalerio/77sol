@@ -23,14 +23,38 @@ class ClienteServices {
             return $this->clienteRepository->findAll();
         }
 
-        return $this->clienteRepository->findById($id);
+        $cliente = $this->clienteRepository->findById($id);
+
+        if (!$cliente) {
+            throw new \Exception('Cliente não encontrado.');
+        }
+
+        return $cliente;
     }
 
     public function editaCliente(array $data, string $id){
-        $clienteEntity = new ClienteEntity($data['nome'], $data['email'], $data['telefone'], $data['documento']);
+        $cliente = $this->clienteRepository->findById($id);
+
+        if (!$cliente) {
+            throw new \Exception('Cliente não encontrado.');
+        }
+
+        $clienteEntity = new ClienteEntity($cliente['nome'], $cliente['email'], $cliente['telefone'], $cliente['documento']);
+
+        $nome = isset($data['nome'])?$data['nome']:$clienteEntity->getNome();
+        $email = isset($data['email'])?$data['email']:$clienteEntity->getEmail();
+        $telefone = isset($data['telefone'])?$data['telefone']:$clienteEntity->getTelefone();
+        $documento = isset($data['documento'])?$data['documento']:$clienteEntity->getDocumento();
+
+
         $clienteEntity->setId($id);
 
-        return $this->clienteRepository->update($id, $clienteEntity->toArray());
+        return $this->clienteRepository->update($id, [
+            'nome'=> $nome,
+            'email'=> $email,
+            'telefone'=> $telefone,
+            'documento'=> $documento,
+        ]);
     }
 
     public function removerCliente(string $id){
