@@ -1,47 +1,49 @@
-
 # Gestão de Projetos de Energia Solar
 
-O sistema é uma aplicação voltada para empresas que atuam no setor de energia solar, permitindo o cadastro, visualização, atualização e exclusão de informações relacionadas aos projetos de energia solar, incluindo dados sobre clientes, local da instalação e equipamentos
+O sistema é uma aplicação voltada para empresas que atuam no setor de energia solar, permitindo o cadastro, visualização, atualização e exclusão de informações relacionadas aos projetos de energia solar, incluindo dados sobre clientes, local da instalação e equipamentos.
 
+## Índice
+
+- [Descrição](#descrição)
+- [Instalação](#instalação)
+- [Rodando os testes](#rodando-os-testes)
+- [Documentação da API](#documentação-da-api)
+- [Uso do Sistema](#uso-do-sistema)
+- [Apêndice](#apêndice)
+- [Considerações Finais](#considerações-finais)
+
+## Descrição
+
+O sistema permite gerenciar projetos de energia solar, incluindo:
+
+- **Clientes**: Cadastro e gerenciamento dos clientes.
+- **Projetos**: Criação e gerenciamento dos projetos associados aos clientes.
+- **Equipamentos**: Gerenciamento dos equipamentos utilizados nos projetos.
+- **Instalações**: Tipos de instalação para os projetos.
+- **Endereços**: Localização dos projetos.
 
 ## Instalação
 
-Rode essa aplicação usando o docker
+Siga as instruções abaixo para instalar e executar a aplicação usando Docker.
 
-Windows
-```
-https://docs.docker.com/desktop/install/windows-install/
-```
+### Pré-requisitos
 
-Ubuntu
-```
-https://docs.docker.com/engine/install/ubuntu/
-```
+- **Docker**: Certifique-se de que o Docker está instalado em sua máquina.
 
-Depois de instalar o docker, rode o comando:
-```bash
-  docker compose up -d
-```
+#### Instalação do Docker
 
-Para gerar o Swagger:
-```
-docker-compose exec app php artisan l5-swagger:generate
-```
-Para acessar a documentação
-```
-http://localhost:8000/api/documentation#/
-```
+- **Windows**:
+  [Instruções de instalação](https://docs.docker.com/desktop/install/windows-install/)
 
-## Rodando os testes
+- **Ubuntu**:
+  [Instruções de instalação](https://docs.docker.com/engine/install/ubuntu/)
 
-Para rodar os testes, rode o seguinte comando
+- **Mac**:
+  [Instruções de instalação](https://docs.docker.com/desktop/install/mac-install/)
 
-```bash
-  docker-compose exec app php artisan test
-```
+### Passo a Passo
 
+1. **Clone o repositório**:
 
-## Apêndice
-
-Criei uma posta chamada docs, dentro dela tem uma imagem do relacionamento de entidades.
-Tambem tem o link do postman para a collection caso queira usar.
+   ```bash
+   git clone https://github.com/seu-usuario/seu-projeto.git
