@@ -24,21 +24,11 @@ class ClienteServices {
             return $this->clienteRepository->findAll();
         }
 
-        $cliente = $this->clienteRepository->findById($id);
-
-        if (!$cliente) {
-            throw new \Exception('Cliente não encontrado.');
-        }
-
-        return $cliente;
+        return $this->clienteRepository->findById($id);
     }
 
     public function editaCliente(array $data, string $id){
         $cliente = $this->clienteRepository->findById($id);
-
-        if (!$cliente) {
-            throw new ModelNotFoundException();
-        }
 
         $clienteEntity = new ClienteEntity($cliente['nome'], $cliente['email'], $cliente['telefone'], $cliente['documento']);
 
@@ -60,11 +50,6 @@ class ClienteServices {
 
     public function removerCliente(string $id){
         $cliente = $this->clienteRepository->findById($id);
-    
-        if (!$cliente) {
-            throw new \Exception('Cliente não encontrado.');
-        }
-
-        return $this->clienteRepository->delete($id);
+        return $cliente->delete();
     }
 }

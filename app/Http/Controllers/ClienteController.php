@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Models\Cliente;
 use App\Services\ClienteServices;
+use Illuminate\Validation\ValidationException;
 
 class ClienteController extends Controller
 {
@@ -114,6 +115,8 @@ class ClienteController extends Controller
             ]);
             
             return response()->json($this->clienteService->criaCliente($validatedData), 201);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
         } catch(\Exception $e){
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -177,6 +180,8 @@ class ClienteController extends Controller
             return response()->json($this->clienteService->editaCliente($validatedData, $id),200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Cliente não encontrado'], 404);            
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['error' => 'erro ao atualizar cliente: '.$e->getMessage()], 500);
         }

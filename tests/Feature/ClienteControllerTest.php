@@ -69,10 +69,8 @@ class ClienteControllerTest extends TestCase
         ];
 
         $response = $this->postJson('/api/clientes', $dados);
-        $response->assertStatus(500);
-        $response->assertJson([
-            'error' => "The nome field is required."
-        ]);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['nome']);
     }
 
     public function testUpdateAtualizaCliente()
@@ -124,4 +122,49 @@ class ClienteControllerTest extends TestCase
             'id' => $cliente->id,
         ]);
     }
+
+    public function testStoreFalhaValidacaoEmailInvalido(){
+        $dados = [
+            'nome' => 'João Silva',
+            'email' => 'email-invalido',
+            'telefone' => '11999999999',
+            'documento' => '22945267837',
+        ];
+
+        $response = $this->postJson('/api/clientes', $dados);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['email']);
+    }
+    public function testUpdateFalhaValidacao(){
+        $cliente = Cliente::factory()->create();
+
+        $dadosInvalidos = [
+            'nome' => '',
+            'email' => 'email-invalido',
+            'telefone' => '11988888888',
+            'documento' => 'documento-invalido',
+        ];
+
+        $response = $this->putJson("/api/clientes/{$cliente->id}", $dadosInvalidos);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['nome', 'email', 'documento']);
+    }
+
+    public function testDestroyNaoAchaCliente(){
+        $response = $this->deleteJson('/api/clientes/999');
+        $response->assertStatus(404);
+        $response->assertJson([
+            'message' => 'Cliente não encontrado',
+        ]);
+    }
+
+    public function testShowComIdInvalido(){
+        $response = $this->getJson('/api/clientes/abc');
+        $response->assertStatus(404);
+        $response->assertJson([
+            'message' => 'No query results for model [App\\Models\\Cliente] abc',
+        ]);
+    }
+
 }

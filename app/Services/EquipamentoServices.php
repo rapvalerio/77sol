@@ -45,12 +45,7 @@ class EquipamentoServices {
     }
 
     public function removerEquipamento(string $id){
-        $instalacao = $this->equipamentoRepository->findById($id);
-    
-        if (!$instalacao) {
-            throw new \Exception('Instalação não encontrada.');
-        }
-
-        return $this->equipamentoRepository->delete($id);
+        $equipamento = $this->equipamentoRepository->findById($id);
+        return $equipamento->delete();
     }
 }

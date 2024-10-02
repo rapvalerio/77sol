@@ -54,10 +54,8 @@ class InstalacaoControllerTest extends TestCase
         ];
 
         $response = $this->postJson('/api/instalacoes', $dados);
-        $response->assertStatus(500);
-        $response->assertJson([
-            'error' => "The descricao field is required."
-        ]);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['descricao']);
     }
 
     public function testUpdateAtualizaInstalacao()
@@ -89,6 +87,17 @@ class InstalacaoControllerTest extends TestCase
         ]);
     }
 
+    public function testUpdateFalhaValidacao(){
+        $instalacao = Instalacao::factory()->create();
+        $dadosInvalidos = [
+            'descricao' => '',
+        ];
+
+        $response = $this->putJson("/api/instalacoes/{$instalacao->id}", $dadosInvalidos);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['descricao']);
+    }
+
     public function testDestroyDeletaInstalacao()
     {
         $instalacao = Instalacao::factory()->create();
@@ -96,6 +105,22 @@ class InstalacaoControllerTest extends TestCase
         $response->assertStatus(200);
         $this->assertDatabaseMissing('instalacoes', [
             'id' => $instalacao->id,
+        ]);
+    }
+
+    public function testDestroyNaoAchaInstalacao(){
+        $response = $this->deleteJson('/api/instalacoes/999');
+        $response->assertStatus(404);
+        $response->assertJson([
+            'message' => 'Instalação não encontrada',
+        ]);
+    }
+
+    public function testShowComIdInvalido(){
+        $response = $this->getJson('/api/instalacoes/abc');
+        $response->assertStatus(404);
+        $response->assertJson([
+            'message' => 'No query results for model [App\\Models\\Instalacao] abc',
         ]);
     }
 }

@@ -50,14 +50,11 @@ class EquipamentoControllerTest extends TestCase
 
     public function testStoreFalhaCriaEquipamento()
     {
-        $dados = [
-        ];
+        $dados = [];
 
         $response = $this->postJson('/api/equipamentos', $dados);
-        $response->assertStatus(500);
-        $response->assertJson([
-            'error' => "The descricao field is required."
-        ]);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['descricao']);
     }
 
     public function testUpdateAtualizaEquipamento()
@@ -98,4 +95,32 @@ class EquipamentoControllerTest extends TestCase
             'id' => $equipamento->id,
         ]);
     }
+
+    public function testUpdateFalhaValidacao(){
+        $equipamento = Equipamento::factory()->create();
+        $dadosInvalidos = [
+            'descricao' => '',
+        ];
+
+        $response = $this->putJson("/api/equipamentos/{$equipamento->id}", $dadosInvalidos);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['descricao']);
+    }
+
+    public function testDestroyNaoAchaEquipamento(){
+        $response = $this->deleteJson('/api/equipamentos/999');
+        $response->assertStatus(404);
+        $response->assertJson([
+            'message' => 'equipamento não encontrado',
+        ]);
+    }
+
+    public function testShowComIdInvalido(){
+        $response = $this->getJson('/api/equipamentos/abc');
+        $response->assertStatus(404);
+        $response->assertJson([
+            'message' => 'No query results for model [App\\Models\\Equipamento] abc',
+        ]);
+    }
+
 }

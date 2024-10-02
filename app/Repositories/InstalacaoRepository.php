@@ -9,7 +9,7 @@ class InstalacaoRepository{
         return Instalacao::create($data);
     }
 
-    public function findById(int $id): ?Instalacao {
+    public function findById(string $id): ?Instalacao {
         return Instalacao::findOrFail($id);
     }
 

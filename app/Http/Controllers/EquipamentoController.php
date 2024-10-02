@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Models\Equipamento;
 use App\Services\EquipamentoServices;
+use Illuminate\Validation\ValidationException;
 
 class EquipamentoController extends Controller
 {
@@ -71,6 +72,8 @@ class EquipamentoController extends Controller
             ]);
             
             return response()->json($this->equipamentoService->criaEquipamento($validatedData), 201);
+        } catch(ValidationException $e){
+            return response()->json(['errors' => $e->errors()], 422);
         } catch(\Exception $e) {
             return response()->json(['error' => $e->getMessage()], status:500);
         }
@@ -163,6 +166,8 @@ class EquipamentoController extends Controller
             return response()->json($this->equipamentoService->editaEquipamento($validatedData, $id), 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Equipamento não encontrado'], 404);
+        } catch(ValidationException $e){
+            return response()->json(['errors' => $e->errors()], 422); 
         } catch (\Exception $e) {
             return response()->json(['error' => 'erro ao atualizar o equipamento: ' . $e->getMessage()], 500);
         }
@@ -209,9 +214,9 @@ class EquipamentoController extends Controller
         try{
             return response()->json($this->equipamentoService->removerEquipamento($id),200);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'equipamento not found'], 404);
+            return response()->json(['message' => 'equipamento não encontrado'], 404);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'erro ao deletetar equipamento: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'erro ao deletar equipamento: ' . $e->getMessage()], 500);
         }
     }
 }

@@ -9,8 +9,8 @@ class ClienteRepository{
         return Cliente::create($data);
     }
 
-    public function findById(int $id) {
-        return Cliente::find($id);
+    public function findById(string $id) {
+        return Cliente::findOrFail($id);
     }
 
     public function findAll(){

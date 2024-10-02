@@ -30,10 +30,6 @@ class InstalacaoServices {
     public function editaInstalacao(array $data, string $id){
         $instalacao = $this->instalacaoRepository->findById($id);
 
-        if(!$instalacao){
-            throw new ModelNotFoundException();
-        }
-
         $instalacaoEntity = new InstalacaoEntity($instalacao['descricao']);
 
         $descricao = isset($data['descricao'])?$data['descricao']:$instalacaoEntity->getDescricao();

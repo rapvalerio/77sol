@@ -29,10 +29,6 @@ class EnderecoServices {
     public function editaEndereco(array $data, string $id){
         $endereco = $this->enderecoRepository->findById($id);
 
-        if(!$endereco){
-            throw new ModelNotFoundException();
-        }
-
         $enderecoEntity = new EnderecoEntity($endereco['uf']);
 
         $uf = isset($data['uf'])?$data['uf']:$enderecoEntity->getUf();
@@ -45,12 +41,7 @@ class EnderecoServices {
     }
 
     public function removerEndereco(string $id){
-        $instalacao = $this->enderecoRepository->findById($id);
-    
-        if (!$instalacao) {
-            throw new \Exception('Endereço não encontrado.');
-        }
-
-        return $this->enderecoRepository->delete($id);
+        $endereco = $this->enderecoRepository->findById($id);
+        return $endereco->delete();
     }
 }

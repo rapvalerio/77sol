@@ -6,6 +6,7 @@ use App\Models\Instalacao;
 use App\Services\InstalacaoServices;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class InstalacaoController extends Controller
 {
@@ -73,8 +74,10 @@ class InstalacaoController extends Controller
 
             $response = $this->instalacaoServices->criaInstalacao($validatedData);
             return response()->json($response, 201);
+        } catch(ValidationException $e){
+            return response()->json(['errors' => $e->errors()], 422);
         } catch(\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], status:500);
+            return response()->json(['error' => 'Erro ao criar instalação'], 500);
         }
     }
 
@@ -165,6 +168,8 @@ class InstalacaoController extends Controller
             return response()->json($this->instalacaoServices->editaInstalacao($validatedData, $id), 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Instalação não encontrada'], 404);
+        } catch(ValidationException $e){
+            return response()->json(['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erro ao atualizar a instalação: ' . $e->getMessage()], 500);
         }
@@ -211,7 +216,7 @@ class InstalacaoController extends Controller
         try{
             return response()->json($this->instalacaoServices->removerInstalacao($id),200);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Instalação não encontrado'], 404);
+            return response()->json(['message' => 'Instalação não encontrada'], 404);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erro ao deletar a instalação: ' . $e->getMessage()], 500);
         }

@@ -6,6 +6,7 @@ use App\Models\Endereco;
 use App\Services\EnderecoServices;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class EnderecoController extends Controller
 {
@@ -70,6 +71,8 @@ class EnderecoController extends Controller
             ]);
             
             return response()->json($this->enderecoService->criaEndereco($validatedData), 201);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
         } catch(\Exception $e) {
             return response()->json(['error' => $e->getMessage()], status:500);
         }
@@ -162,6 +165,8 @@ class EnderecoController extends Controller
             return response()->json($this->enderecoService->editaEndereco($validatedData, $id), 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Endereço não encontrado'], 404);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erro ao atualizar o endereço: ' . $e->getMessage()], 500);
 

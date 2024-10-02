@@ -9,7 +9,7 @@ class EquipamentoRepository{
         return Equipamento::create($data);
     }
 
-    public function findById(int $id) {
+    public function findById(string $id) {
         return Equipamento::findOrFail($id);
     }
 

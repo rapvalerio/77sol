@@ -10,17 +10,16 @@ class EnderecoControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    //TODO: Pensar em uma maneira de melhorar esse teste, as vezes ele tenta criar um estado que ja existe e acaba falahndo o teste
-    public function testIndexRetorna2Endereco(): void
+    public function testIndexRetornaTodosEndereco(): void
     {
-        Endereco::factory()->create();
         $response = $this->getJson('/api/enderecos');
         $response->assertStatus(200);
+        $response->assertJsonCount(27);
     }
 
     public function testShowRetornaEndereco()
     {
-        $endereco = Endereco::first();
+        $endereco = Endereco::factory()->create(['uf' => 'CC']);
         $response = $this->getJson("/api/enderecos/{$endereco->id}");
         $response->assertStatus(200);
         $response->assertJson([
@@ -50,14 +49,11 @@ class EnderecoControllerTest extends TestCase
 
     public function testStoreFalhaCriaEndereco()
     {
-        $dados = [
-        ];
+        $dados = [];
 
         $response = $this->postJson('/api/enderecos', $dados);
-        $response->assertStatus(500);
-        $response->assertJson([
-            'error' => "The uf field is required."
-        ]);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['uf']);
     }
 
     public function testUpdateAtualizaEndereco()
@@ -78,10 +74,10 @@ class EnderecoControllerTest extends TestCase
     public function testUpdateNaoAchaEndereco()
     {
         $dadosAtualizados = [
-            'descricao' => 'João Silva Atualizado',
+            'uf' => 'ZZ',
         ];
 
-        $response = $this->putJson("/api/enderecos/99", $dadosAtualizados);
+        $response = $this->putJson("/api/enderecos/999", $dadosAtualizados);
         $response->assertStatus(404);
         $response ->assertJson([
             "message" => "Endereço não encontrado"
@@ -95,6 +91,34 @@ class EnderecoControllerTest extends TestCase
         $response->assertStatus(200);
         $this->assertDatabaseMissing('enderecos', [
             'id' => $endereco->id,
+        ]);
+    }
+
+    public function testUpdateFalhaValidacao(){
+        $endereco = Endereco::factory()->create(['uf' => 'DD']);
+
+        $dadosInvalidos = [
+            'uf' => 'ABC',
+        ];
+
+        $response = $this->putJson("/api/enderecos/{$endereco->id}", $dadosInvalidos);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['uf']);
+    }
+
+    public function testDestroyNaoAchaEndereco(){
+        $response = $this->deleteJson('/api/enderecos/999');
+        $response->assertStatus(404);
+        $response->assertJson([
+            'message' => 'Endereço não encontrado',
+        ]);
+    }
+
+    public function testShowComIdInvalido(){
+        $response = $this->getJson('/api/enderecos/abc');
+        $response->assertStatus(404);
+        $response->assertJson([
+            'message' => 'No query results for model [App\\Models\\Endereco] abc',
         ]);
     }
 }
