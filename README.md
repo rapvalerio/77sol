@@ -75,11 +75,15 @@ Siga as instruções abaixo para instalar e executar a aplicação usando Docker
     ```bash
     docker-compose exec app php artisan migrate
     ```
-8. **Gere a documentação Swagger:**
+8. **Criar o banco para os testes**
+    ```bash
+    docker-compose exec app php artisan db:seed --env=testing
+    ```
+9. **Gere a documentação Swagger:**
     ```bash
     docker-compose exec app php artisan l5-swagger:generate
     ```
-9. **Acesse a aplicação:**
+10. **Acesse a aplicação:**
     ```bash
     Abra o navegador e acesse http://localhost:8000/api/documentation
     ```
