@@ -81,7 +81,7 @@ Siga as instruções abaixo para instalar e executar a aplicação usando Docker
     ```
 9. **Acesse a aplicação:**
     ```bash
-    Abra o navegador e acesse http://localhost:8000
+    Abra o navegador e acesse http://localhost:8000/api/documentation
     ```
 
 # Rodando os testes
