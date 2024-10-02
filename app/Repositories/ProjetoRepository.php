@@ -40,13 +40,7 @@ class ProjetoRepository{
         $query = Projeto::with('equipamentos');
 
         if (isset($data['id'])) {
-            $projeto = $query->find($data['id']);
-            
-            if (!$projeto) {
-                throw new \Exception('Projeto não encontrado.');
-            }
-
-            return $projeto;
+            return $query->findOrFail($data['id']);
         }
 
         if (isset($data['nome'])) {

@@ -42,7 +42,8 @@ class ProjetoControllerTest extends TestCase
             'instalacao_id' => 1,
         ]);
 
-        $response->assertStatus(status: 500);
+        $response->assertStatus(status: 422);
+        $response->assertJsonValidationErrors(['nome', 'equipamentos']);
     }
 
     public function testStoreRetornaSucesso()
@@ -108,9 +109,9 @@ class ProjetoControllerTest extends TestCase
     {
         $response = $this->getJson('/api/projetos/999');
 
-        $response->assertStatus(500);
+        $response->assertStatus(404);
         $response->assertJson([
-            'error' => 'Projeto não encontrado.'
+            'message' => 'Projeto não encontrado'
         ]);
     }
 
@@ -182,4 +183,32 @@ class ProjetoControllerTest extends TestCase
             'quantidade' => 8,
         ]);
     }
+    
+    public function testUpdateRetorna404QuandoNaoAchaProjeto()
+    {
+        $dadosAtualizados = [
+            'nome' => 'Teste atualizado',
+        ];
+
+        $response = $this->putJson('/api/projetos/999', $dadosAtualizados);
+
+        $response->assertStatus(404);
+        $response->assertJson([
+            'message' => 'Projetos não encontrado',
+        ]);
+    }
+
+    public function testUpdateFalhaValidacao()
+{
+    $projeto = Projeto::factory()->create();
+
+    $dadosInvalidos = [
+        'nome' => '',
+    ];
+
+    $response = $this->putJson("/api/projetos/{$projeto->id}", $dadosInvalidos);
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['nome']);
+}
 }

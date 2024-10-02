@@ -121,6 +121,8 @@ class ProjetoController extends Controller
             ]);
     
             return response()->json($this->service->criaProjeto($validatedData), 201);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
         } catch(\Exception $e) {
             return response()->json(['error' => $e->getMessage()], status:500);
         }
@@ -165,6 +167,8 @@ class ProjetoController extends Controller
     {
         try {
             return response()->json($this->service->buscaProjeto(['id' => $id]), 200);
+        } catch(ModelNotFoundException $e) {
+            return response()->json(['message' => 'Projeto não encontrado'], 404);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -247,6 +251,8 @@ class ProjetoController extends Controller
             return response()->json($this->service->editaProjeto($validatedData, $id), 200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Projetos não encontrado'], 404);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             dd($e->getMessage());
             return response()->json(['error' => 'Erro ao atualizar o projeto: ' . $e->getMessage()], 500);

@@ -77,7 +77,6 @@ class EnderecoControllerTest extends TestCase
 
     public function testUpdateNaoAchaEndereco()
     {
-        Endereco::factory()->create();
         $dadosAtualizados = [
             'descricao' => 'João Silva Atualizado',
         ];
