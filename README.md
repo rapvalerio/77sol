@@ -58,15 +58,28 @@ Siga as instruções abaixo para instalar e executar a aplicação usando Docker
     ```bash
     docker-compose run --rm app composer install
     ```
-5. **Execute as migrações para criar as tabelas no banco de dados:**
+5. **Crie o arquivo .env**
+    ```bash
+    cp .env.example .env
+    ```
+6. **Adicione os valores para o banco de dados**
+    ```bash
+    DB_CONNECTION=mysql
+    DB_HOST=db
+    DB_PORT=3306
+    DB_DATABASE=laravel
+    DB_USERNAME=root
+    DB_PASSWORD=root
+    ```
+7. **Execute as migrações para criar as tabelas no banco de dados:**
     ```bash
     docker-compose exec app php artisan migrate
     ```
-6. **Gere a documentação Swagger:**
+8. **Gere a documentação Swagger:**
     ```bash
     docker-compose exec app php artisan l5-swagger:generate
     ```
-7. **Acesse a aplicação:**
+9. **Acesse a aplicação:**
     ```bash
     Abra o navegador e acesse http://localhost:8000
     ```
