@@ -86,9 +86,9 @@ Siga as instruções abaixo para instalar e executar a aplicação usando Docker
 
 # Rodando os testes
 Para executar os testes automatizados, utilize o seguinte comando:
-    ```bash
-    docker-compose exec app php artisan test
-    ```
+```bash
+docker-compose exec app php artisan test
+```
 # Documentação da API
 A documentação completa da API está disponível via Swagger.
 -  **Gerar a documentação Swagger:**
