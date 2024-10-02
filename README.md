@@ -77,7 +77,7 @@ Siga as instruções abaixo para instalar e executar a aplicação usando Docker
     ```
 8. **Criar o banco para os testes**
     ```bash
-    docker-compose exec app php artisan db:seed --env=testing
+    docker-compose exec app php artisan migrate --env=testing
     ```
 9. **Gere a documentação Swagger:**
     ```bash
